@@ -17,7 +17,7 @@
                     <h1>Ranked Paper Scissor</h1>
                 </div>
                 <div class="col d-flex align-items-center justify-content-end">
-                    
+                    {{Auth::user()->name}}
                 </div>
             </div>
             <div class="row flex-grow-1">
@@ -25,7 +25,7 @@
                     <div class="d-flex flex-column h-100">
                         <div class="row">
                             <div class="col">
-                                <button type="button" class="btn btn-tertiary btn-normal-game w-100 mb-2">Normal Game</button>
+                                <a href="{{route('queue', ['type' => 'normal'])}}" class="btn btn-tertiary btn-normal-game w-100 mb-2">Normal Game</a>
                                 <button type="button" class="btn btn-primary btn-ranked-game w-100 mb-2">Ranked Game</button>
                                 <button type="button" class="btn btn-secondary btn-custom-game w-100 mb-2">Custom Game</button>
                             </div>
@@ -47,35 +47,3 @@
     @yield('script')
 </body>
 </html>
-<script>
-    // const app = new Vue({
-    //     el: '#app',
-    //     data: {
-    //         connection: null,
-    //         player: null,
-    //     },
-    //     created: function(){
-    //         this.connection = new WebSocket('ws://localhost:5050');
-
-    //         this.connection.onopen = function(event) {                
-    //             console.log('Connected...');
-    //         };
-
-    //         this.connection.onmessage = function(event) {
-    //             var parse = JSON.parse(event.data);
-    //             console.log(parse);
-    //         };
-
-    //         this.connection.onclose = function(event) {
-    //             console.log('pipoca');
-    //             console.log(event.data);
-    //         }
-    //     },
-    //     mounted: function(){
-
-    //     },
-    //     methods: {
-
-    //     }
-    // });
-</script>

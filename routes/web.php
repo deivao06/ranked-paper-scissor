@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,6 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/', function () {
         return view('leaderboard');
     })->name('master');
+
+    Route::get('/queue/{type}', [GameController::class, 'queue'])->name('queue');
 });
