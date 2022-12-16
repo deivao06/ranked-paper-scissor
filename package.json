@@ -1,0 +1,40 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "@popperjs/core": "^2.11.6",
+        "axios": "^0.21",
+        "laravel-mix": "^6.0.6",
+        "lodash": "^4.17.19",
+        "postcss": "^8.1.14",
+        "resolve-url-loader": "^5.0.0",
+        "sass": "^1.49.9",
+        "sass-loader": "^12.6.0",
+        "vue-loader": "^15.9.8",
+        "vue-template-compiler": "^2.6.14"
+    },
+    "dependencies": {
+        "@johmun/vue-tags-input": "^2.1.0",
+        "bootstrap": "^5.2.3",
+        "datatables.net-bs4": "^1.11.5",
+        "imports-loader": "^3.1.1",
+        "inputmask": "^5.0.7",
+        "jquery": "^3.6.0",
+        "jquery-mousewheel": "^3.1.13",
+        "malihu-custom-scrollbar-plugin": "^3.1.5",
+        "toastr": "^2.1.4",
+        "vue": "^2.6.14",
+        "vue-cookies": "^1.8.1",
+        "vuejs-title": "^1.0.16",
+        "websocket": "^1.0.34",
+        "ws": "^8.11.0"
+    }
+}

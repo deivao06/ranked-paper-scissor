@@ -1,0 +1,122 @@
+html,
+body {
+    font-family: fantasy !important;
+    color: #d9d9d9 !important
+}
+
+/* CONTAINERS */
+.container,
+.container-fluid {
+    background-color :rgb(30 16 30) !important;
+}
+
+/* CARDS */
+.card {
+    box-shadow: 0 2px 3px 0px rgb(0 0 0) !important;
+    background-color: rgb(52 28 52) !important;
+    border-radius: 30px !important;
+}
+
+.card .card-title {
+    color:#29d089;
+}
+
+.card input{
+    background-color: rgb(115 93 115) !important;
+    border-color: rgb(52 28 52) !important;
+    box-shadow: 0 2px 3px 2px rgb(30 16 30) !important;
+}
+
+.card .form-control:focus,
+.card .form-control:active {
+    box-shadow: none !important;
+    color: rgb(52 28 52) !important;
+}
+
+.card .form-check-input {
+    color: rgb(52 28 52) !important;
+    box-shadow: 0 2px 3px 2px rgb(30 16 30) !important;
+}
+
+.card .form-check-input:checked {
+    background-color :rgb(30 16 30) !important;
+}
+
+/* BUTTONS */
+.btn.btn-primary {
+    background-color: #29d089 !important;
+    border-color: #29d089 !important;
+    color: rgb(52 28 52) !important;
+    box-shadow: 0 2px 3px 2px rgb(30 16 30) !important;
+}
+
+.btn.btn-primary:hover {
+    background-color: #1ca36a  !important;
+    border-color: #1ca36a !important;
+}
+
+.btn.btn-primary:active {
+    background-color: #29d089 !important;
+    border-color: #29d089 !important;
+}
+
+.btn.btn-secondary {
+    background-color: rgb(97 61 91) !important;
+    border-color: rgb(97 61 91) !important;
+    color: rgb(52 28 52) !important;
+    box-shadow: 0 2px 3px 2px rgb(30 16 30) !important;
+}
+
+.btn.btn-secondary:hover {
+    background-color: rgb(76 48 71) !important;
+    border-color: rgb(41 25 38) !important;
+}
+
+.btn.btn-secondary:active {
+    background-color: rgb(76 48 71) !important;
+    border-color: rgb(97 61 91) !important;
+}
+
+.btn.btn-tertiary {
+    background-color: rgb(115 93 115) !important;
+    border-color: rgb(97 61 91) !important;
+    color: rgb(52 28 52) !important;
+    box-shadow: 0 2px 3px 2px rgb(30 16 30) !important;
+}
+
+.btn.btn-tertiary:hover {
+    background-color: rgb(97 61 91) !important;
+    border-color: rgb(41 25 38) !important;
+}
+
+.btn.btn-tertiary:active {
+    background-color: rgb(97 61 91) !important;
+    border-color: rgb(97 61 91) !important;
+}
+/* FORMS */
+
+
+/* TOASTR */
+.toast{
+    box-shadow: none !important;
+}
+
+/* NAVBAR */
+.nav-bar{
+    background-color: #29d089 !important;
+    color: rgb(30 16 30) !important;
+    box-shadow: 0 0px 6px 2px rgb(30 16 30) !important;
+    border-color: rgb(30 16 30) !important;
+    height: 80px;
+    z-index: 1;
+}
+
+/* SIDEBAR */
+.side-bar{ 
+    background-color: rgb(52 28 52) !important;
+}
+
+/* MAIN CONTENT */
+.main-content{ 
+    background-color: rgb(115 93 115) !important;
+}
