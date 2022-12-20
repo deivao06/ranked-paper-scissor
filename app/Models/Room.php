@@ -6,38 +6,58 @@ class Room
 {
     public $id;
     public $players;
+    public $type;
 
-    public function __construct(Player $player){
-        $this->id = hash("md5", $player->conn->resourceId . rand(0, 1000));
+    const NORMAL = 'normal';
+    const RANKED = 'ranked';
+    const CUSTOM = 'custom';
+
+    public function __construct($user, $type){
+        $this->id = hash("md5", $user->id . rand(0, 1000));
         $this->players = [];
-        $this->attachPlayer($player);
+        $this->attachPlayer($user);
+        $this->type = $type;
     }
 
-    public function attachPlayer(Player $player){
+    public function attachPlayer($user){
         if(count($this->players) >= 0 && count($this->players) < 2){
-            if($player->roomId != null){
+            if($user->roomId != null){
                 throw new \Exception('Player already in another room');
             }
 
-            $player->roomId = $this->id;
-            $this->players[] = $player;
+            $user->roomId = $this->id;
 
+            $this->players[] = $user;
             return;
         }
 
         throw new \Exception('Room is already full');
     }
 
-    public function detachPlayer(Player $player){
-        unset($this->players[$player]);
+    public function detachPlayer($user){
+        unset($this->players[$user]);
+        $user->roomId = null;
 
         return $this->players;
     }
 
     public function toArray(){
+        $players = [];
+
+        foreach($this->players as $player){
+            $formatedPlayer = (object)[
+                "id" => $player->id,
+                "name" => $player->name,
+                "email" => $player->email,
+                "roomId" => $player->roomId
+            ];            
+            $players[] = $formatedPlayer;
+        }
+
         return [
             "id" => $this->id,
-            "players" => $this->players
+            "players" => $players,
+            "type" => $this->type
         ];
     }
 }

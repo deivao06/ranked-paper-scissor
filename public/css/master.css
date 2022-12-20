@@ -171,3 +171,13 @@ body {
 .search-loader h3{
     color: rgb(52 28 52) !important;
 }
+
+/* LINKS */
+.primary-link {
+    text-decoration: none;
+    color: rgb(30 16 30) !important;
+}
+
+.primary-link:hover {
+    text-decoration: underline;
+}

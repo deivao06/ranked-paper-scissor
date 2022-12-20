@@ -8,13 +8,14 @@
 
     <link href="{{ asset('css/master.css') }}" rel="stylesheet" media="all">
     <link rel="stylesheet" href="{{mix('css/app.css')}}?v={{rand(1, 1000000000)}}">
+    <script src="{{mix('/js/app.js')}}?v={{rand(1, 1000000000)}}"></script>
 </head>
 <body>
     <div id="app">
         <div class="container-fluid min-vh-100 d-flex flex-column">
             <div class="row nav-bar">
                 <div class="col d-flex align-items-center">
-                    <h1>Ranked Paper Scissor</h1>
+                    <a class="primary-link" href="{{route('master')}}"><h1>Ranked Paper Scissor</h1></a>
                 </div>
                 <div class="col d-flex align-items-center justify-content-end">
                     {{Auth::user()->name}}
@@ -37,13 +38,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-10 main-content p-2 d-flex align-items-center justify-content-center">
+                <div class="col-md-10 main-content p-2">
                     @yield('main-content')
                 </div>
             </div>
         </div>
     </div>
-    <script src="{{mix('/js/app.js')}}?v={{rand(1, 1000000000)}}"></script>
     @yield('script')
 </body>
 </html>
