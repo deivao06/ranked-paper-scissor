@@ -39,7 +39,17 @@ body {
 }
 
 .card .form-check-input:checked {
-    background-color :rgb(30 16 30) !important;
+    background-color: rgb(30 16 30) !important;
+}
+
+.card.player-choice {
+    height: 200px !important;
+    width: 180px !important;
+    background-color: rgb(115 93 115) !important;
+}
+
+.card.player-choice.waiting {
+    background-color: #29d089 !important;
 }
 
 /* BUTTONS */
@@ -93,6 +103,11 @@ body {
     background-color: rgb(97 61 91) !important;
     border-color: rgb(97 61 91) !important;
 }
+
+.btn.btn-game {
+    width: 100px;
+    height: 100px;
+}
 /* FORMS */
 
 
@@ -119,6 +134,7 @@ body {
 /* MAIN CONTENT */
 .main-content{ 
     background-color: rgb(115 93 115) !important;
+    min-height: 100%;
 }
 
 /* LOADER */
@@ -180,4 +196,10 @@ body {
 
 .primary-link:hover {
     text-decoration: underline;
+}
+
+/* HR */
+hr {
+    border-top: 5px solid #29d089 !important;
+    opacity: 1 !important;
 }

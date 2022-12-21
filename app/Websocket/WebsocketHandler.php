@@ -78,6 +78,20 @@ class WebsocketHandler implements MessageComponentInterface {
                     }
                 }
                 break;
+            case 'start-game':
+                $player = $this->getPlayerByConn($from);
+                $room = $this->getRoomById($player->roomId);
+
+                $game = $room->startGame();
+
+                $response = [
+                    "game" => $game,
+                    "message" => "Game Started",
+                    "command" => "game-started",
+                ];
+
+                $this->sendMessageToRoomWithoutFrom($room->id, $response, $from);
+                break;
         }
     }
 
@@ -119,6 +133,16 @@ class WebsocketHandler implements MessageComponentInterface {
         }
     }
 
+    private function sendMessageToRoomWithoutFrom($roomId, $message, $from){
+        foreach($this->playerQueue as $player){
+            if($player->roomId == $roomId){
+                if($player->conn != $from){
+                    $player->conn->send(json_encode($message));
+                }
+            }
+        }
+    }
+
     private function removeRoom(Room $room){
         $rooms = [];
         foreach($this->rooms as $value){
@@ -128,5 +152,21 @@ class WebsocketHandler implements MessageComponentInterface {
         }
 
         $this->rooms = $rooms;
+    }
+
+    private function getPlayerByConn(ConnectionInterface $conn){
+        foreach($this->playerQueue as $player){
+            if($player->conn == $conn){
+                return $player;
+            }
+        }
+    }
+
+    private function getRoomById($roomId){
+        foreach($this->rooms as $room){
+            if($room->id == $roomId){
+                return $room;
+            }
+        }
     }
 }

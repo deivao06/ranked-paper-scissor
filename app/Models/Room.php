@@ -7,6 +7,7 @@ class Room
     public $id;
     public $players;
     public $type;
+    public $game;
 
     const NORMAL = 'normal';
     const RANKED = 'ranked';
@@ -34,11 +35,15 @@ class Room
         throw new \Exception('Room is already full');
     }
 
-    public function detachPlayer($user){
-        unset($this->players[$user]);
-        $user->roomId = null;
+    public function startGame(){
+        if(count($this->players) < 2){
+            throw new \Exception('Room is not full');
+        }
 
-        return $this->players;
+        $this->game = new Game($this->players, $this->type);
+        $this->game->start();
+        
+        return $this->game->toArray();
     }
 
     public function toArray(){
