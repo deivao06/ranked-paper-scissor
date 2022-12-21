@@ -2,6 +2,18 @@
 
 @section('main-content')
 <div id="app-normal" class="d-flex align-items-center justify-content-center h-100">
+    @section('sidebar')
+        <div class="d-flex flex-column h-100">
+            <div class="row">
+                <div class="col">
+                    
+                </div>
+            </div>
+            <div class="row flex-grow-1 align-items-end ">
+                
+            </div>
+        </div>
+    @endsection
     <div v-if="searchingMatch" class="d-flex flex-column justify-content-center align-items-center search-loader">
         <h3>Searching Match...</h3>
         <div class="lds-ripple mb-3"><div></div><div></div></div>
@@ -13,12 +25,7 @@
         <a href="{{route('master')}}" class="btn btn-primary">Cancel</a>
     </div>
     <div v-else class="w-100 h-100 ps-3 pt-1">
-        <div class="player2 row h-50 w-100">
-            @{{player2.name}}
-        </div>
-        <div class="player1 row h-50 w-100 align-items-end">
-            @{{player1.name}}
-        </div>
+        Match
     </div>
 </div>
 @endsection
@@ -35,12 +42,9 @@
             },
             searchingMatch: true,
             searchingPlayers: false,
-            room: null,
-            player1: null,
-            player2: null
+            room: null
         },
         created: function(){
-            // this.connection = new WebSocket('ws://localhost:5050'); //local
             this.connection = new WebSocket('ws://172.22.50.18:5050');
 
             this.connection.onopen = function(event) {      
@@ -48,7 +52,7 @@
                     ...app.playerData,
                     command: 'queue'
                 }
-
+                
                 app.searchingMatch = true;
                 app.connection.send(JSON.stringify(data));
             };
@@ -67,26 +71,16 @@
                         app.searchingPlayers = true;
                     }else{
                         app.searchingPlayers = false;
-
-                        if(app.room.players.length = 2){
-                            app.room.players.forEach((player, index) => {
-                                if(player.id == "{{Auth::user()->id}}"){
-                                    app.player1 = player;
-                                }else{
-                                    app.player2 = player;
-                                }
-                            })
-                        }
                     }   
                 }
                              
             };
-            
             this.connection.onclose = function(event) {
-                window.location.href = "{{ route('master')}}";
+                console.log(event.data);
             }
         },
         mounted: function(){
+
         },
         methods: {
 

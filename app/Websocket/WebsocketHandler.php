@@ -78,19 +78,14 @@ class WebsocketHandler implements MessageComponentInterface {
                     }
                 }
                 break;
-            case 'exit-room':
-                
-                break;
         }
     }
 
     public function onClose(ConnectionInterface $conn) {
-        foreach($this->playerQueue as $user){
-            if($user->conn == $conn){
+        foreach($this->playerQueue as $player){
+            if($player->conn == $conn){
                 foreach($this->rooms as $room){
-                    if($user->roomId == $room->id){
-                        $room->detachPlayer($user);
-        
+                    if($player->roomId == $room->id){
                         $response = [
                             "room" => $room->toArray(),
                             "message" => "Room closed",
@@ -100,8 +95,8 @@ class WebsocketHandler implements MessageComponentInterface {
                         foreach($room->players as $player){
                             $player->conn->send(json_encode($response));
                         }
-        
-                        unset($this->rooms[$room]);
+
+                        $this->removeRoom($room);
                     }
                 }
             }
@@ -122,5 +117,16 @@ class WebsocketHandler implements MessageComponentInterface {
                 $player->conn->send(json_encode($message));
             }
         }
+    }
+
+    private function removeRoom(Room $room){
+        $rooms = [];
+        foreach($this->rooms as $value){
+            if($room->id != $value->id){
+                $rooms[] = $value;
+            }
+        }
+
+        $this->rooms = $rooms;
     }
 }

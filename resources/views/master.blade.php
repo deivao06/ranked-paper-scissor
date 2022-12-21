@@ -23,20 +23,7 @@
             </div>
             <div class="row flex-grow-1">
                 <div class="col-md-2 side-bar p-3">
-                    <div class="d-flex flex-column h-100">
-                        <div class="row">
-                            <div class="col">
-                                <a href="{{route('queue', ['type' => 'normal'])}}" class="btn btn-tertiary btn-normal-game w-100 mb-2">Normal Game</a>
-                                <button type="button" class="btn btn-primary btn-ranked-game w-100 mb-2">Ranked Game</button>
-                                <button type="button" class="btn btn-secondary btn-custom-game w-100 mb-2">Custom Game</button>
-                            </div>
-                        </div>
-                        <div class="row flex-grow-1 align-items-end ">
-                            <div class="col">
-                                <a type="button" class="btn btn-primary btn-ranked-game w-30" href="{{route('logout')}}">Logout</a>
-                            </div>
-                        </div>
-                    </div>
+                    @yield('sidebar')
                 </div>
                 <div class="col-md-10 main-content p-2">
                     @yield('main-content')
