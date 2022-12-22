@@ -120,10 +120,14 @@
                     case 'game-started':
                         app.game = parse.game;
                         app.searchingPlayers = false;
+                        app.searchingMatch = false;
+                        
+                        break;
+                    case 'game-update':
+                        app.game = parse.game;
                         break;
                     default:
                         app.room = parse.room;
-                        app.searchingMatch = false;
 
                         if(app.room.players.length < 2){
                             app.searchingPlayers = true;
@@ -133,12 +137,12 @@
                             }
 
                             app.connection.send(JSON.stringify(data));
-                        }   
+                        }
                 }
                              
             };
             this.connection.onclose = function(event) {
-                console.log(event.data);
+                
             }
         },
         mounted: function(){
@@ -150,7 +154,7 @@
                     game: this.game,
                     command: 'end-turn'
                 }
-                
+
                 app.connection.send(JSON.stringify(data));
             }
         },

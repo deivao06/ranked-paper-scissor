@@ -37,7 +37,28 @@ class Game
     }
 
     public function endTurn($gameData){
+        dump($gameData);
+        dump($this->player1, $this->player2);
         
+        if($gameData->player1->info->id == $this->player1->info->id){
+            $this->player1->choice = $gameData->player1->choice;
+            $this->player1->state = self::WAITING;
+
+            if($this->player2->state == self::WAITING){
+                
+            }
+
+            return $this->game;
+        }else{
+            $this->player2->choice = $gameData->player1->choice;
+            $this->player2->state = self::WAITING;
+
+            if($this->player1->state == self::WAITING){
+                
+            }
+
+            return $this->game;
+        }
     }
 
     public function end(){

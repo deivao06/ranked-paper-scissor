@@ -92,7 +92,7 @@ class WebsocketHandler implements MessageComponentInterface {
                             }else{
                                 $game->player1 = $game->playerWithoutChoice($game->player1);
                             }
-
+                            
                             $response = [
                                 "game" => $game,
                                 "message" => "Game Started",
@@ -107,8 +107,23 @@ class WebsocketHandler implements MessageComponentInterface {
             case 'end-turn':
                 $player = $this->getPlayerByConn($from);
                 $room = $this->getRoomById($player->roomId);
-                $game = $room->game->endTurn($data->game);
 
+                dd($data->game);
+
+                $game = $room->game->endTurn($data->game);
+                foreach($this->playerQueue as $player){
+                    if($player->roomId == $room->id){
+                        if($player->conn != $from){
+                            $response = [
+                                "game" => $game,
+                                "message" => "Turn Ended",
+                                "command" => "game-update",
+                            ];
+
+                            $player->conn->send(json_encode($response));
+                        }
+                    }
+                }
                 break;
         }
     }
