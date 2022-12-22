@@ -33,17 +33,11 @@ class Game
     }
 
     public function start(){
-        $this->turn = 1;
+        $this->turn == 1;
     }
 
-    public function endTurn(){
-        $this->player1->state = self::PLAYING;
-        $this->player1->choice = null; 
-
-        $this->player2->state = self::PLAYING;
-        $this->player2->choice = null; 
-
-        $this->turn++;
+    public function endTurn($gameData){
+        
     }
 
     public function end(){
@@ -56,6 +50,14 @@ class Game
             "player2" => $this->player2,
             "turn" => $this->turn,
             "type" => $this->type
+        ];
+    }
+
+    public function playerWithoutChoice($player){
+        return [
+            "info" => $player->info,
+            "state" => $player->state,
+            "score" => $player->score,
         ];
     }
 
@@ -73,5 +75,5 @@ class Game
         }
 
         return $formatedPlayers;
-    }
+    }    
 }

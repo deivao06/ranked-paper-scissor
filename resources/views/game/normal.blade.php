@@ -59,10 +59,16 @@
         <a href="{{route('master')}}" class="btn btn-primary">Cancel</a>
     </div>
     <div v-else class="d-flex w-100 flex-column align-items-center justify-content-center">
+        <div class="row mb-3">
+            <h3>Choose your option..</h3>
+        </div>
+        <div class="row mb-5">
+            <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'rock' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'rock'">Rock</button></div>
+            <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'paper' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'paper'">Paper</button></div>
+            <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'scissor' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'scissor'">Scissor</button></div>
+        </div>
         <div class="row">
-            <div class="col"><button class="btn btn-primary btn-game">Rock</button></div>
-            <div class="col"><button class="btn btn-primary btn-game">Paper</button></div>
-            <div class="col"><button class="btn btn-primary btn-game">Scissor</button></div>
+            <div class="col"><button class="btn btn-tertiary" :disabled="game.player1.choice == null" @click="endTurn()">End Turn</button></div>
         </div>
     </div>
 </div>
@@ -104,25 +110,15 @@
                 app.searchingMatch = true;
                 app.connection.send(JSON.stringify(data));
             };
-
             this.connection.onmessage = function(event) {
                 var parse = JSON.parse(event.data);
+
                 switch(parse.command){
                     case 'exit-room':
                         window.location.href = "{{route('master')}}";
                         break;
                     case 'game-started':
                         app.game = parse.game;
-                        
-                        if(app.game.player1.info.email == app.playerData.email){
-                            sidebar.player1 = app.game.player1;
-                            sidebar.player2 = app.game.player2;
-                        }else{
-                            sidebar.player1 = app.game.player2;
-                            sidebar.player2 = app.game.player1;
-                        }
-
-                        sidebar.show = true;
                         app.searchingPlayers = false;
                         break;
                     default:
@@ -149,8 +145,31 @@
 
         },
         methods: {
+            endTurn: function(){
+                var data = {
+                    game: this.game,
+                    command: 'end-turn'
+                }
+                
+                app.connection.send(JSON.stringify(data));
+            }
+        },
+        watch: {
+            game: function(newValue, oldValue){
+                if(newValue.player1.info.email == app.playerData.email){
+                    sidebar.player1 = newValue.player1;
+                    sidebar.player2 = newValue.player2;
+                }else{
+                    sidebar.player1 = newValue.player2;
+                    sidebar.player2 = newValue.player1;
 
-        }
+                    app.game.player1 = newValue.player2;
+                    app.game.player2 = newValue.player1;
+                }
+
+                sidebar.show = true;
+            }
+        },
     });
 </script>
 @endsection

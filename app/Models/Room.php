@@ -42,8 +42,8 @@ class Room
 
         $this->game = new Game($this->players, $this->type);
         $this->game->start();
-        
-        return $this->game->toArray();
+
+        return $this->game;
     }
 
     public function toArray(){

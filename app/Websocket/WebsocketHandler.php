@@ -84,13 +84,31 @@ class WebsocketHandler implements MessageComponentInterface {
 
                 $game = $room->startGame();
 
-                $response = [
-                    "game" => $game,
-                    "message" => "Game Started",
-                    "command" => "game-started",
-                ];
+                foreach($this->playerQueue as $player){
+                    if($player->roomId == $room->id){
+                        if($player->conn != $from){
+                            if($player->id == $game->player1->info->id){
+                                $game->player2 = $game->playerWithoutChoice($game->player2);
+                            }else{
+                                $game->player1 = $game->playerWithoutChoice($game->player1);
+                            }
 
-                $this->sendMessageToRoomWithoutFrom($room->id, $response, $from);
+                            $response = [
+                                "game" => $game,
+                                "message" => "Game Started",
+                                "command" => "game-started",
+                            ];
+
+                            $player->conn->send(json_encode($response));
+                        }
+                    }
+                }
+                break;
+            case 'end-turn':
+                $player = $this->getPlayerByConn($from);
+                $room = $this->getRoomById($player->roomId);
+                $game = $room->game->endTurn($data->game);
+
                 break;
         }
     }
