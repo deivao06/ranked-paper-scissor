@@ -12,6 +12,10 @@ class Game
     const PLAYING = 'playing';
     const WAITING = 'waiting';
 
+    const ROCK = 'rock';
+    const PAPER = 'paper';
+    const SCISSOR = 'scissor';
+
     public function __construct($players, $type){
         $formatedPlayers = $this->formatPlayers($players);
 
@@ -33,31 +37,97 @@ class Game
     }
 
     public function start(){
-        $this->turn == 1;
+        $this->turn = 1;
     }
 
     public function endTurn($gameData){
-        dump($gameData);
-        dump($this->player1, $this->player2);
-        
         if($gameData->player1->info->id == $this->player1->info->id){
             $this->player1->choice = $gameData->player1->choice;
             $this->player1->state = self::WAITING;
 
             if($this->player2->state == self::WAITING){
-                
+                $this->chooseTurnOrGameWinner();
             }
-
-            return $this->game;
         }else{
             $this->player2->choice = $gameData->player1->choice;
             $this->player2->state = self::WAITING;
 
             if($this->player1->state == self::WAITING){
-                
+                $this->chooseTurnOrGameWinner();
             }
+        }
+    }
 
-            return $this->game;
+    public function chooseTurnOrGameWinner(){
+        if($this->player1->choice == self::ROCK){
+            if($this->player2->choice == self::ROCK){
+                $this->resetBothPlayersChoiceAndState();
+                $this->turn ++;
+            }else if($this->player2->choice == self::PAPER){
+                $this->resetBothPlayersChoiceAndState();
+                $this->player2->score++;
+
+                if($this->player2->score >= 3){
+                    $this->end();
+                }
+
+                $this->turn++;
+            }else if($this->player2->choice == self::SCISSOR){
+                $this->resetBothPlayersChoiceAndState();
+                $this->player1->score++;
+
+                if($this->player1->score >= 3){
+                    $this->end();
+                }
+
+                $this->turn++;
+            }
+        }else if($this->player1->choice == self::PAPER){
+            if($this->player2->choice == self::ROCK){
+                $this->resetBothPlayersChoiceAndState();
+                $this->player1->score++;
+
+                if($this->player1->score >= 3){
+                    $this->end();
+                }
+
+                $this->turn++;
+            }else if($this->player2->choice == self::PAPER){
+                $this->resetBothPlayersChoiceAndState();
+                $this->turn ++;
+            }else if($this->player2->choice == self::SCISSOR){
+                $this->resetBothPlayersChoiceAndState();
+                $this->player2->score++;
+
+                if($this->player2->score >= 3){
+                    $this->end();
+                }
+
+                $this->turn++;
+            }
+        }else if($this->player1->choice == self::SCISSOR){
+            if($this->player2->choice == self::ROCK){
+                $this->resetBothPlayersChoiceAndState();
+                $this->player2->score++;
+
+                if($this->player2->score >= 3){
+                    $this->end();
+                }
+
+                $this->turn++;
+            }else if($this->player2->choice == self::PAPER){
+                $this->resetBothPlayersChoiceAndState();
+                $this->player1->score++;
+
+                if($this->player1->score >= 3){
+                    $this->end();
+                }
+
+                $this->turn++;
+            }else if($this->player2->choice == self::SCISSOR){
+                $this->resetBothPlayersChoiceAndState();
+                $this->turn ++;
+            }
         }
     }
 
@@ -75,7 +145,7 @@ class Game
     }
 
     public function playerWithoutChoice($player){
-        return [
+        return (object) [
             "info" => $player->info,
             "state" => $player->state,
             "score" => $player->score,
@@ -96,5 +166,13 @@ class Game
         }
 
         return $formatedPlayers;
-    }    
+    }
+
+    private function resetBothPlayersChoiceAndState(){
+        $this->player1->choice = null;
+        $this->player2->choice = null;
+
+        $this->player1->state = self::PLAYING;
+        $this->player2->state = self::PLAYING;
+    }
 }

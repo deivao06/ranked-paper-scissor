@@ -25,7 +25,7 @@
                 <div class="col-md-2 side-bar p-3">
                     @yield('sidebar')
                 </div>
-                <div class="col-md-10 main-content p-2">
+                <div class="col-md-10 main-content">
                     @yield('main-content')
                 </div>
             </div>

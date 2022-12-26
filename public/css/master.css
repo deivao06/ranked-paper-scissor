@@ -50,6 +50,7 @@ body {
 
 .card.player-choice.waiting {
     background-color: #29d089 !important;
+    color: rgb(52 28 52) !important;
 }
 
 /* BUTTONS */
@@ -202,4 +203,20 @@ body {
 hr {
     border-top: 5px solid #29d089 !important;
     opacity: 1 !important;
+}
+
+
+/* TEXT */
+.text-green {
+    color: #29d089 !important;
+}
+
+/* SCOREBOARD */
+.scoreboard{ 
+    background-color: rgb(52 28 52) !important;
+}
+
+.scoreboard .score{
+    font-size: 140px;
+    color: #29d089 !important;
 }
