@@ -14,9 +14,12 @@
                         </div>
                     </div>
                     <div class="row align-items-center justify-content-center">
-                        <div class="card player-choice" :class="player2.state == 'waiting' ? 'waiting' : ''">
+                        <div class="card player-choice" :class="player2.state == 'waiting' || showLastTurn == true ? 'waiting' : ''">
                             <div class="card-body d-flex align-items-center justify-content-center">
-                                <div v-if="player2.state == 'waiting'">
+                                <div v-if="showLastTurn">
+                                    <h3>@{{lastTurn.player2.choice.toUpperCase()}}</h3>
+                                </div>
+                                <div v-else-if="player2.state == 'waiting' && showLastTurn == false">
                                     <h3>?</h3>
                                 </div>
                             </div>
@@ -36,9 +39,12 @@
                         </div>
                     </div>
                     <div class="row align-items-center justify-content-center">
-                        <div class="card player-choice" :class="player1.state == 'waiting' ? 'waiting' : ''">
+                        <div class="card player-choice" :class="player1.state == 'waiting' || showLastTurn == true ? 'waiting' : ''">
                             <div class="card-body d-flex align-items-center justify-content-center">
-                                <div v-if="player1.choice != null">
+                                <div v-if="showLastTurn">
+                                    <h3>@{{lastTurn.player1.choice.toUpperCase()}}</h3>
+                                </div>
+                                <div v-else-if="player1.choice != null && showLastTurn == false">
                                     <h3>@{{player1.choice.toUpperCase()}}</h3>
                                 </div>
                             </div>
@@ -70,9 +76,15 @@
             </div>
         </div>
         <div class="col-md-10 d-flex align-items-center justify-content-center">
-            <div v-if="game.player1.state == 'waiting'">
+            <div v-if="game.player1.state == 'waiting' && showLastTurn == false">
                 <div class="row mb-3">
                     <h3>Waiting for the other player...</h3>
+                </div>
+            </div>
+            <div v-else-if="showLastTurn">
+                <div class="row mb-3">
+                    <h3 v-if="game.history[game.turn - 1].winner == 'draw'">@{{game.history[game.turn - 1].winner.toUpperCase()}}</h3>
+                    <h3 v-else>TURN WINNER: <span class="text-green">@{{game.history[game.turn - 1].winner.toUpperCase()}}</span></h3>
                 </div>
             </div>
             <div v-else class="d-flex flex-column align-items-center justify-content-center">
@@ -101,6 +113,8 @@
             show: false,
             player1: null,
             player2: null,
+            lastTurn: null,
+            showLastTurn: false,
         }
     })
 
@@ -112,6 +126,7 @@
                 email: "{{Auth::user()->email}}"
             },
             searchingMatch: true,
+            showLastTurn: false,
             room: null,
             game: null
         },
@@ -155,7 +170,19 @@
                     break;
                     case 'game-update': 
                         app.game = parse.game;
-                        
+
+                        if(Object.keys(app.game.history).length > 0){
+                            sidebar.lastTurn = app.formatLastTurn(app.game.history[app.game.turn - 1]);
+                            sidebar.showLastTurn = true;
+                            app.showLastTurn = true;
+
+                            setTimeout(() => {
+                                sidebar.lastTurn = null;
+                                sidebar.showLastTurn = false;
+                                app.showLastTurn = false;
+                            }, 3000);
+                        }
+
                         sidebar.player1 = app.game.player1;
                         sidebar.player2 = app.game.player2;
                     break;
@@ -184,6 +211,20 @@
                 }
 
                 app.connection.send(JSON.stringify(data));
+            },
+            formatLastTurn: function(lastTurn){
+                var player1 = lastTurn.player1;
+                var player2 = lastTurn.player2;
+
+                if(this.game.player1.info.id != lastTurn.player1.info.id){
+                    lastTurn.player1 = player2;
+                    lastTurn.player2 = player1;
+                }else{
+                    lastTurn.player1 = player1;
+                    lastTurn.player2 = player2;
+                }
+
+                return lastTurn;
             }
         }
     });
