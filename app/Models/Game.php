@@ -16,6 +16,10 @@ class Game
     const PAPER = 'paper';
     const SCISSOR = 'scissor';
 
+    const NORMAL = 'normal';
+    const RANKED = 'ranked';
+    const CUSTOM = 'custom';
+
     public function __construct($players, $type){
         $formatedPlayers = $this->formatPlayers($players);
 
@@ -68,7 +72,7 @@ class Game
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    $this->end();
+                    // $this->end();
                 }
 
                 $this->turn++;
@@ -77,7 +81,7 @@ class Game
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    $this->end();
+                    // $this->end();
                 }
 
                 $this->turn++;
@@ -88,7 +92,7 @@ class Game
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    $this->end();
+                    // $this->end();
                 }
 
                 $this->turn++;
@@ -100,7 +104,7 @@ class Game
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    $this->end();
+                    // $this->end();
                 }
 
                 $this->turn++;
@@ -111,7 +115,7 @@ class Game
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    $this->end();
+                    // $this->end();
                 }
 
                 $this->turn++;
@@ -120,7 +124,7 @@ class Game
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    $this->end();
+                    // $this->end();
                 }
 
                 $this->turn++;
@@ -133,23 +137,6 @@ class Game
 
     public function end(){
 
-    }
-
-    public function toArray(){
-        return [
-            "player1" => $this->player1,
-            "player2" => $this->player2,
-            "turn" => $this->turn,
-            "type" => $this->type
-        ];
-    }
-
-    public function playerWithoutChoice($player){
-        return (object) [
-            "info" => $player->info,
-            "state" => $player->state,
-            "score" => $player->score,
-        ];
     }
 
     private function formatPlayers($players){

@@ -6,18 +6,12 @@ class Room
 {
     public $id;
     public $players;
-    public $type;
     public $game;
 
-    const NORMAL = 'normal';
-    const RANKED = 'ranked';
-    const CUSTOM = 'custom';
-
-    public function __construct($user, $type){
+    public function __construct($user){
         $this->id = hash("md5", $user->id . rand(0, 1000));
         $this->players = [];
         $this->attachPlayer($user);
-        $this->type = $type;
     }
 
     public function attachPlayer($user){
@@ -35,13 +29,19 @@ class Room
         throw new \Exception('Room is already full');
     }
 
-    public function startGame(){
+    public function startGame($type){
         if(count($this->players) < 2){
             throw new \Exception('Room is not full');
         }
 
-        $this->game = new Game($this->players, $this->type);
+        $this->game = new Game($this->players, $type);
         $this->game->start();
+
+        return $this->game;
+    }
+
+    public function endTurn($gameData){
+        $this->game->endTurn($gameData);
 
         return $this->game;
     }
@@ -61,8 +61,13 @@ class Room
 
         return [
             "id" => $this->id,
-            "players" => $players,
-            "type" => $this->type
+            "players" => $players
         ];
+    }
+
+    public function sendMessageToRoom($message){
+        foreach($this->players as $player){
+            $player->conn->send(json_encode($message));
+        }
     }
 }

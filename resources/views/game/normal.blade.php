@@ -75,14 +75,14 @@
                     <h3>Waiting for the other player...</h3>
                 </div>
             </div>
-            <div class="d-flex flex-column align-items-center justify-content-center" v-else>
+            <div v-else class="d-flex flex-column align-items-center justify-content-center">
                 <div class="row mb-3">
                     <h3>Choose an option..</h3>
                 </div>
                 <div class="row mb-5">
-                    <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'rock' ? 'btn-primary' : 'btn-secondary'" @click="player1Choice('rock')">Rock</button></div>
-                    <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'paper' ? 'btn-primary' : 'btn-secondary'" @click="player1Choice('paper')">Paper</button></div>
-                    <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'scissor' ? 'btn-primary' : 'btn-secondary'" @click="player1Choice('scissor')">Scissor</button></div>
+                    <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'rock' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'rock'">Rock</button></div>
+                    <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'paper' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'paper'">Paper</button></div>
+                    <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'scissor' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'scissor'">Scissor</button></div>
                 </div>
                 <div class="row">
                     <div class="col"><button class="btn btn-tertiary" :disabled="game.player1.choice == null" @click="endTurn()">End Turn</button></div>
@@ -109,12 +109,11 @@
         data: {
             connection: null,
             playerData: {
-                email: "{{Auth::user()->email}}",
-                queue: 'normal',
+                email: "{{Auth::user()->email}}"
             },
             searchingMatch: true,
             room: null,
-            game: null,
+            game: null
         },
         created: function(){
             this.connection = new WebSocket('ws://172.22.50.18:5050');
@@ -124,7 +123,7 @@
                     ...app.playerData,
                     command: 'queue'
                 }
-                
+
                 app.searchingMatch = true;
                 app.connection.send(JSON.stringify(data));
             };
@@ -132,71 +131,39 @@
                 var parse = JSON.parse(event.data);
 
                 switch(parse.command){
-                    case 'exit-room':
-                        window.location.href = "{{route('master')}}";
-                        break;
-                    case 'game-started':
-                        var player1 = parse.game.player1;
-                        var player2 = parse.game.player2;
-
-                        if(player1.info.email == app.playerData.email){
-                            sidebar.player1 = player1;
-                            sidebar.player2 = player2;
-
-                            parse.game.player1 = player1;
-                            parse.game.player2 = player2;
-                        }else{
-                            sidebar.player1 = player2;
-                            sidebar.player2 = player1;
-
-                            parse.game.player1 = player2;
-                            parse.game.player2 = player1;
-                        }
-
-                        sidebar.show = true;
-                        app.searchingMatch = false;
-                        app.game = parse.game;
-
-                        console.log(app.game, 'start');
-
-                        break;
-                    case 'game-update':
-                        var player1 = parse.game.player1;
-                        var player2 = parse.game.player2;
-
-                        if(player1.info.email == app.playerData.email){
-                            sidebar.player1 = player1;
-                            sidebar.player2 = player2;
-
-                            parse.game.player1 = player1;
-                            parse.game.player2 = player2;
-                        }else{
-                            sidebar.player1 = player2;
-                            sidebar.player2 = player1;
-
-                            parse.game.player1 = player2;
-                            parse.game.player2 = player1;
-                        }
-
-                        app.game = parse.game;
-
-                        console.log(app.game, 'update');
-
-                        break;
-                    default:
+                    case 'room-created':
+                        app.room = parse.room;
+                    break;
+                    case 'room-found':
                         app.room = parse.room;
 
                         if(app.room.players.length == 2){
-                            var data = {
-                                command: 'start-game'
-                            }
+                            var data = {command: 'start-game', queue: 'normal'};
                             app.connection.send(JSON.stringify(data));
                         }
+                    break;
+                    case 'exit-room':
+                        window.location.href = "{{route('master')}}";
+                    break;
+                    case 'game-started':
+                        app.game = parse.game;
+                        sidebar.player1 = app.game.player1;
+                        sidebar.player2 = app.game.player2;
+
+                        app.searchingMatch = false;
+                        sidebar.show = true;
+                    break;
+                    case 'game-update': 
+                        app.game = parse.game;
+                        
+                        sidebar.player1 = app.game.player1;
+                        sidebar.player2 = app.game.player2;
+                    break;
                 }
                              
             };
             this.connection.onclose = function(event) {
-                
+                window.location.href = "{{route('master')}}";
             }
         },
         mounted: function(){
@@ -214,11 +181,8 @@
                 }
 
                 app.connection.send(JSON.stringify(data));
-            },
-            player1Choice: function(choice){
-                this.game.player1.choice = choice;
             }
-        },
+        }
     });
 </script>
 @endsection

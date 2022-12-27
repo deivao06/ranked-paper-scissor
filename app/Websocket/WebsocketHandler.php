@@ -28,124 +28,100 @@ class WebsocketHandler implements MessageComponentInterface {
 
         switch($command){
             case 'queue':
-                if($data->queue == 'normal'){
-                    $user = (object) $this->userRepository->getUserByEmail($data->email)->toArray();
-                    $user->{'roomId'} = null;
-                    $user->{'conn'} = $from;
-
-                    $this->playerQueue->attach($user);
+                $user = (object) $this->userRepository->getUserByEmail($data->email)->toArray();
+                $user->{'roomId'} = null;
+                $user->{'conn'} = $from;
     
-                    if(count($this->rooms) == 0){
-                        $room = new Room($user, Room::NORMAL);
+                $this->playerQueue->attach($user);
+    
+                if(count($this->rooms) == 0){
+                    $room = new Room($user);
+    
+                    $response = [
+                        "room" => $room->toArray(),
+                        "command" => 'room-created'
+                    ];
+    
+                    $this->rooms[] = $room;
+                    $from->send(json_encode($response));
+                }else{
+                    $roomFound = false;
+    
+                    foreach($this->rooms as $room){
+                        if(count($room->players) < 2){
+                            $room->attachPlayer($user);
+                            $roomFound = true;
+    
+                            $response = [
+                                "room" => $room->toArray(),
+                                "command" => 'room-found'
+                            ];
+    
+                            $from->send(json_encode($response));
+                            break;
+                        }
+                    }
+    
+                    if(!$roomFound){
+                        $room = new Room($user);
+    
                         $response = [
                             "room" => $room->toArray(),
-                            "message" => "Match found",
-                            "command" => null
+                            "command" => 'room-created'
                         ];
-
+    
                         $this->rooms[] = $room;
     
                         $from->send(json_encode($response));
-                    }else{
-                        $roomFound = false;
-                        foreach($this->rooms as $room){
-                            if(count($room->players) < 2){
-                                $room->attachPlayer($user);
-                                $roomFound = true;
-
-                                $response = [
-                                    "room" => $room->toArray(),
-                                    "message" => "Player found",
-                                    "command" => null
-                                ];
-
-                                $this->sendMessageToRoom($user->roomId, $response);
-                                break;
-                            }
-                        }
-
-                        if(!$roomFound){
-                            $room = new Room($user, Room::NORMAL);
-                            $response = [
-                                "room" => $room->toArray(),
-                                "message" => "Match found",
-                                "command" => null
-                            ];
-                            $this->rooms[] = $room;
-
-                            $from->send(json_encode($response));
-                        }
                     }
                 }
-                break;
+            break;
             case 'start-game':
                 $player = $this->getPlayerByConn($from);
                 $room = $this->getRoomById($player->roomId);
-                $game = $room->startGame();
+                $game = $room->startGame($data->queue);
 
-                foreach($this->playerQueue as $player){
-                    if($player->roomId == $room->id){
-                        if($player->conn != $from){
-                            if($player->id == $game->player1->info->id){
-                                $game->player2 = $game->playerWithoutChoice($game->player2);
-                            }else{
-                                $game->player1 = $game->playerWithoutChoice($game->player1);
-                            }
-
-                            $response = [
-                                "game" => $game,
-                                "message" => "Game Started",
-                                "command" => "game-started",
-                            ];
-
-                            $player->conn->send(json_encode($response));
-                        }
-                    }
+                foreach($room->players as $player){
+                    $response = [
+                        "game" => $this->formatGame($player, $game),
+                        "command" => 'game-started'
+                    ];
+                    
+                    $player->conn->send(json_encode($response));
                 }
-                break;
+            break;
             case 'end-turn':
                 $player = $this->getPlayerByConn($from);
                 $room = $this->getRoomById($player->roomId);
-                $room->game->endTurn($data->game);
+                $game = $room->endTurn($data->game);
+                
+                foreach($room->players as $player){
+                    $formatedGame = $this->formatGame($player, $game);
 
-                $game = $room->game;
-
-                foreach($this->playerQueue as $player){
-                    if($player->roomId == $room->id){
-                        $response = [
-                            "game" => $game,
-                            "message" => "Turn Ended",
-                            "command" => "game-update",
-                        ];
-
-                        $player->conn->send(json_encode($response));
-                    }
+                    $response = [
+                        "game" => $formatedGame,
+                        "command" => 'game-update'
+                    ];
+                    
+                    $player->conn->send(json_encode($response));
                 }
-                break;
+            break;
         }
     }
 
     public function onClose(ConnectionInterface $conn) {
-        foreach($this->playerQueue as $player){
-            if($player->conn == $conn){
-                foreach($this->rooms as $room){
-                    if($player->roomId == $room->id){
-                        $response = [
-                            "room" => $room->toArray(),
-                            "message" => "Room closed",
-                            "command" => 'exit-room'
-                        ];
+        $player = $this->getPlayerByConn($conn);
+        $room = $this->getRoomById($player->roomId);
 
-                        foreach($room->players as $player){
-                            $player->conn->send(json_encode($response));
-                        }
-
-                        $this->removeRoom($room);
-                    }
-                }
-            }
+        if($room){
+            $response = [
+                "command" => 'exit-room'
+            ];
+    
+            $room->sendMessageToRoom($response);
+            $this->removeRoom($room);
         }
-
+        
         echo "Connection {$conn->remoteAddress}|{$conn->resourceId} exit from room\n";
     }
 
@@ -153,24 +129,6 @@ class WebsocketHandler implements MessageComponentInterface {
         echo "An error has occurred: {$e->getMessage()}\n";
         
         $conn->close();
-    }
-
-    private function sendMessageToRoom($roomId, $message){
-        foreach($this->playerQueue as $player){
-            if($player->roomId == $roomId){
-                $player->conn->send(json_encode($message));
-            }
-        }
-    }
-
-    private function sendMessageToRoomWithoutFrom($roomId, $message, $from){
-        foreach($this->playerQueue as $player){
-            if($player->roomId == $roomId){
-                if($player->conn != $from){
-                    $player->conn->send(json_encode($message));
-                }
-            }
-        }
     }
 
     private function removeRoom(Room $room){
@@ -198,5 +156,32 @@ class WebsocketHandler implements MessageComponentInterface {
                 return $room;
             }
         }
+    }
+
+    private function formatGame($player, $game){
+        $formatedGame = (object) [
+            "player1" => $game->player1,
+            "player2" => $game->player2,
+            "turn" => $game->turn,
+            "type" => $game->type
+        ];
+
+        if($formatedGame->player1->info->id != $player->id){
+            $formatedGame->player1 = $game->player2;
+            $formatedGame->player2 = (object)[
+                "info" => $game->player1->info,
+                "state" => $game->player1->state,
+                "score" => $game->player1->score
+            ];
+        }else{
+            $formatedGame->player1 = $game->player1;
+            $formatedGame->player2 = (object)[
+                "info" => $game->player2->info,
+                "state" => $game->player2->state,
+                "score" => $game->player2->score
+            ];
+        }
+
+        return $formatedGame;
     }
 }
