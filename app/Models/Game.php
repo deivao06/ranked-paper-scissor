@@ -8,6 +8,7 @@ class Game
     public $player2;
     public $turn;
     public $type;
+    public $history;
 
     const PLAYING = 'playing';
     const WAITING = 'waiting';
@@ -38,6 +39,7 @@ class Game
         ];
 
         $this->type = $type;
+        $this->history = [];
     }
 
     public function start(){
@@ -63,76 +65,92 @@ class Game
     }
 
     public function chooseTurnOrGameWinner(){
+        $this->history[$this->turn] = (object)[
+            "player1" => clone $this->player1,
+            "player2" => clone $this->player2
+        ];
+
         if($this->player1->choice == self::ROCK){
             if($this->player2->choice == self::ROCK){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = "draw";
+
                 $this->turn ++;
             }else if($this->player2->choice == self::PAPER){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    // $this->end();
+                    $this->end();
                 }
-
+                
                 $this->turn++;
             }else if($this->player2->choice == self::SCISSOR){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
+
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    // $this->end();
+                    $this->end();
                 }
 
                 $this->turn++;
             }
         }else if($this->player1->choice == self::PAPER){
             if($this->player2->choice == self::ROCK){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
+
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    // $this->end();
+                    $this->end();
                 }
 
                 $this->turn++;
             }else if($this->player2->choice == self::PAPER){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = "draw";
+                
                 $this->turn ++;
             }else if($this->player2->choice == self::SCISSOR){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    // $this->end();
+                    $this->end();
                 }
 
                 $this->turn++;
             }
         }else if($this->player1->choice == self::SCISSOR){
             if($this->player2->choice == self::ROCK){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    // $this->end();
+                    $this->end();
                 }
 
                 $this->turn++;
             }else if($this->player2->choice == self::PAPER){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
+
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    // $this->end();
+                    $this->end();
                 }
 
                 $this->turn++;
             }else if($this->player2->choice == self::SCISSOR){
-                $this->resetBothPlayersChoiceAndState();
+                $this->history[$this->turn]->{"winner"} = "draw";
+
                 $this->turn ++;
             }
         }
+
+        $this->resetBothPlayersChoiceAndState();
     }
 
     public function end(){

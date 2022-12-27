@@ -159,6 +159,9 @@
                         sidebar.player1 = app.game.player1;
                         sidebar.player2 = app.game.player2;
                     break;
+                    case 'game-ended':
+
+                    break;
                 }
                              
             };

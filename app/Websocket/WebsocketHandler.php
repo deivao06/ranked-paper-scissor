@@ -163,7 +163,8 @@ class WebsocketHandler implements MessageComponentInterface {
             "player1" => $game->player1,
             "player2" => $game->player2,
             "turn" => $game->turn,
-            "type" => $game->type
+            "type" => $game->type,
+            "history" => (object)$game->history,
         ];
 
         if($formatedGame->player1->info->id != $player->id){
