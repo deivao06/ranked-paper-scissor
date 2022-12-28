@@ -69,22 +69,34 @@
                 @{{game.player2.score}}
             </div>
             <div class="row turn text-center">
-                <h1>TURN @{{game.turn}}</h1>
+                <h1 v-if="showLastTurn || game.ended">TURN @{{game.turn - 1}}</h1>
+                <h1 v-else>TURN @{{game.turn}}</h1>
             </div>
             <div class="row score align-items-center justify-content-center">
                 @{{game.player1.score}}
             </div>
         </div>
         <div class="col-md-10 d-flex align-items-center justify-content-center">
-            <div v-if="game.player1.state == 'waiting' && showLastTurn == false">
+            <div v-if="game.player1.state == 'waiting' && showLastTurn == false && game.ended == false">
                 <div class="row mb-3">
                     <h3>Waiting for the other player...</h3>
                 </div>
             </div>
-            <div v-else-if="showLastTurn">
+            <div v-else-if="showLastTurn && game.ended == false">
                 <div class="row mb-3">
                     <h3 v-if="game.history[game.turn - 1].winner == 'draw'">@{{game.history[game.turn - 1].winner.toUpperCase()}}</h3>
                     <h3 v-else>TURN WINNER: <span class="text-green">@{{game.history[game.turn - 1].winner.toUpperCase()}}</span></h3>
+                </div>
+            </div>
+            <div v-else-if="game.ended == true" class="d-flex flex-column align-items-center justify-content-center">
+                <div class="row mb-3">
+                    <h3>THE WINNER IS...</h3>
+                </div>
+                <div class="row mb-5">
+                    <h1 class="text-green">@{{gameWinner.info.name}}</h1>
+                </div>
+                <div class="row">
+                    <div class="col"><button class="btn btn-tertiary" @click="exitGame()">Exit Game</button></div>
                 </div>
             </div>
             <div v-else class="d-flex flex-column align-items-center justify-content-center">
@@ -115,6 +127,7 @@
             player2: null,
             lastTurn: null,
             showLastTurn: false,
+            gameWinner: null,
         }
     })
 
@@ -171,23 +184,21 @@
                     case 'game-update': 
                         app.game = parse.game;
 
-                        if(Object.keys(app.game.history).length > 0){
-                            sidebar.lastTurn = app.formatLastTurn(app.game.history[app.game.turn - 1]);
-                            sidebar.showLastTurn = true;
-                            app.showLastTurn = true;
-
-                            setTimeout(() => {
-                                sidebar.lastTurn = null;
-                                sidebar.showLastTurn = false;
-                                app.showLastTurn = false;
-                            }, 3000);
-                        }
+                        app.lastTurn(true);
 
                         sidebar.player1 = app.game.player1;
                         sidebar.player2 = app.game.player2;
                     break;
                     case 'game-ended':
+                        app.game = parse.game
 
+                        app.lastTurn();
+                        
+                        if(app.game.player1.score == 3){
+                            app.gameWinner = app.game.player1;
+                        }else if(app.game.player2.score == 3){
+                            app.gameWinner = app.game.player2;
+                        }
                     break;
                 }
                              
@@ -225,6 +236,26 @@
                 }
 
                 return lastTurn;
+            },
+            lastTurn: function(timeout = false){
+                if(Object.keys(app.game.history).length > 0 &&
+                app.game.player1.state == 'playing' &&
+                app.game.player2.state == 'playing'){
+                    sidebar.lastTurn = app.formatLastTurn(app.game.history[app.game.turn - 1]);
+                    sidebar.showLastTurn = true;
+                    app.showLastTurn = true;
+
+                    if(timeout){
+                        setTimeout(() => {
+                            sidebar.lastTurn = null;
+                            sidebar.showLastTurn = false;
+                            app.showLastTurn = false;
+                        }, 5000);
+                    }
+                }
+            },
+            exitGame: function(){
+                window.location.href = "{{route('master')}}";
             }
         }
     });

@@ -9,6 +9,7 @@ class Game
     public $turn;
     public $type;
     public $history;
+    public $ended;
 
     const PLAYING = 'playing';
     const WAITING = 'waiting';
@@ -40,6 +41,7 @@ class Game
 
         $this->type = $type;
         $this->history = [];
+        $this->ended = false;
     }
 
     public function start(){
@@ -154,7 +156,7 @@ class Game
     }
 
     public function end(){
-
+        $this->ended = true;
     }
 
     private function formatPlayers($players){

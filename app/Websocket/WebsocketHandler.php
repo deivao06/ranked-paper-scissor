@@ -102,6 +102,10 @@ class WebsocketHandler implements MessageComponentInterface {
                         "game" => $formatedGame,
                         "command" => 'game-update'
                     ];
+
+                    if($formatedGame->ended){
+                        $response["command"] = 'game-ended';
+                    }
                     
                     $player->conn->send(json_encode($response));
                 }
@@ -165,6 +169,7 @@ class WebsocketHandler implements MessageComponentInterface {
             "turn" => $game->turn,
             "type" => $game->type,
             "history" => (object)$game->history,
+            "ended" => $game->ended
         ];
 
         if($formatedGame->player1->info->id != $player->id){
