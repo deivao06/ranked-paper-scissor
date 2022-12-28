@@ -10,6 +10,7 @@ class Game
     public $type;
     public $history;
     public $ended;
+    public $gameWinner;
 
     const PLAYING = 'playing';
     const WAITING = 'waiting';
@@ -42,6 +43,7 @@ class Game
         $this->type = $type;
         $this->history = [];
         $this->ended = false;
+        $this->gameWinner = null;
     }
 
     public function start(){
@@ -83,7 +85,7 @@ class Game
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    $this->end();
+                    $this->end($this->player2);
                 }
                 
                 $this->turn++;
@@ -93,7 +95,7 @@ class Game
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    $this->end();
+                    $this->end($this->player1);
                 }
 
                 $this->turn++;
@@ -105,7 +107,7 @@ class Game
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    $this->end();
+                    $this->end($this->player1);
                 }
 
                 $this->turn++;
@@ -119,7 +121,7 @@ class Game
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    $this->end();
+                    $this->end($this->player2);
                 }
 
                 $this->turn++;
@@ -131,7 +133,7 @@ class Game
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
-                    $this->end();
+                    $this->end($this->player2);
                 }
 
                 $this->turn++;
@@ -141,7 +143,7 @@ class Game
                 $this->player1->score++;
 
                 if($this->player1->score >= 3){
-                    $this->end();
+                    $this->end($this->player1);
                 }
 
                 $this->turn++;
@@ -155,7 +157,8 @@ class Game
         $this->resetBothPlayersChoiceAndState();
     }
 
-    public function end(){
+    public function end($player){
+        $this->gameWinner = $player;
         $this->ended = true;
     }
 

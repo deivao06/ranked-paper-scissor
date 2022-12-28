@@ -93,13 +93,16 @@
                     <h3>THE WINNER IS...</h3>
                 </div>
                 <div class="row mb-5">
-                    <h1 class="text-green">@{{gameWinner.info.name}}</h1>
+                    <h1 class="text-green">@{{game.gameWinner.info.name}}</h1>
                 </div>
                 <div class="row">
                     <div class="col"><button class="btn btn-tertiary" @click="exitGame()">Exit Game</button></div>
                 </div>
             </div>
-            <div v-else class="d-flex flex-column align-items-center justify-content-center">
+            <div v-else class="d-flex flex-column align-items-center justify-content-between w-100 h-100">
+                <div class="row mt-3 w-100 text-end">
+                    <h1 class="text-green p-0">@{{counter}}</h1>
+                </div>
                 <div class="row mb-3">
                     <h3>Choose an option..</h3>
                 </div>
@@ -108,7 +111,7 @@
                     <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'paper' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'paper'">Paper</button></div>
                     <div class="col"><button class="btn btn-game" :class="game.player1.choice == 'scissor' ? 'btn-primary' : 'btn-secondary'" @click="game.player1.choice = 'scissor'">Scissor</button></div>
                 </div>
-                <div class="row">
+                <div class="row mb-5">
                     <div class="col"><button class="btn btn-tertiary" :disabled="game.player1.choice == null" @click="endTurn()">End Turn</button></div>
                 </div>
             </div>
@@ -127,7 +130,6 @@
             player2: null,
             lastTurn: null,
             showLastTurn: false,
-            gameWinner: null,
         }
     })
 
@@ -141,7 +143,9 @@
             searchingMatch: true,
             showLastTurn: false,
             room: null,
-            game: null
+            game: null,
+            counter: 30,
+            counterInterval: null,
         },
         created: function(){
             this.connection = new WebSocket('ws://172.22.50.18:5050');
@@ -180,6 +184,8 @@
 
                         app.searchingMatch = false;
                         sidebar.show = true;
+
+                        app.startCounter();
                     break;
                     case 'game-update': 
                         app.game = parse.game;
@@ -188,17 +194,15 @@
 
                         sidebar.player1 = app.game.player1;
                         sidebar.player2 = app.game.player2;
+                        
+                        setTimeout(() => {
+                            app.startCounter();
+                        }, 5000);
                     break;
                     case 'game-ended':
                         app.game = parse.game
 
                         app.lastTurn();
-                        
-                        if(app.game.player1.score == 3){
-                            app.gameWinner = app.game.player1;
-                        }else if(app.game.player2.score == 3){
-                            app.gameWinner = app.game.player2;
-                        }
                     break;
                 }
                              
@@ -222,6 +226,7 @@
                 }
 
                 app.connection.send(JSON.stringify(data));
+                app.stopCounter();
             },
             formatLastTurn: function(lastTurn){
                 var player1 = lastTurn.player1;
@@ -256,6 +261,29 @@
             },
             exitGame: function(){
                 window.location.href = "{{route('master')}}";
+            },
+            startCounter: function(){
+                if(app.counterInterval != null){
+                    app.stopCounter();
+                }
+                
+                app.counterInterval = setInterval(() => {
+                    app.counter--;
+
+                    if(app.counter <= 0){
+                        app.stopCounter();
+
+                        var data = {
+                            command: 'timeout'
+                        }
+
+                        app.connection.send(JSON.stringify(data));
+                    }
+                }, 1000);
+            },
+            stopCounter: function(){
+                clearInterval(app.counterInterval);
+                app.counter = 30;
             }
         }
     });

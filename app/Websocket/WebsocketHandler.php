@@ -110,6 +110,28 @@ class WebsocketHandler implements MessageComponentInterface {
                     $player->conn->send(json_encode($response));
                 }
             break;
+            case 'timeout':
+                $player = $this->getPlayerByConn($from);
+                $room = $this->getRoomById($player->roomId);
+
+                if($room && !$room->game->ended){
+                    if($player->id == $room->game->player1->info->id){
+                        $room->game->end($room->game->player2);
+                    }else{
+                        $room->game->end($room->game->player1);
+                    }
+
+                    $formatedGame = $this->formatGame($player, $room->game);
+
+                    $response = [
+                        "game" => $formatedGame,
+                        "command" => 'game-ended'
+                    ];
+
+                    $room->sendMessageToRoom($response);
+                    $this->removeRoom($room);
+                }
+            break;
         }
     }
 
@@ -117,11 +139,20 @@ class WebsocketHandler implements MessageComponentInterface {
         $player = $this->getPlayerByConn($conn);
         $room = $this->getRoomById($player->roomId);
 
-        if($room){
+        if($room && !$room->game->ended){
+            if($player->id == $room->game->player1->info->id){
+                $room->game->end($room->game->player2);
+            }else{
+                $room->game->end($room->game->player1);
+            }
+
+            $formatedGame = $this->formatGame($player, $room->game);
+
             $response = [
-                "command" => 'exit-room'
+                "game" => $formatedGame,
+                "command" => 'game-ended'
             ];
-    
+
             $room->sendMessageToRoom($response);
             $this->removeRoom($room);
         }
@@ -169,7 +200,8 @@ class WebsocketHandler implements MessageComponentInterface {
             "turn" => $game->turn,
             "type" => $game->type,
             "history" => (object)$game->history,
-            "ended" => $game->ended
+            "ended" => $game->ended,
+            "gameWinner" => $game->gameWinner,
         ];
 
         if($formatedGame->player1->info->id != $player->id){
