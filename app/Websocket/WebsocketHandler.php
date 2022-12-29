@@ -3,7 +3,7 @@
 namespace App\Websocket;
 
 use App\Http\Repositories\UserRepository;
-use App\Models\Room;
+use App\Game\Room;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
