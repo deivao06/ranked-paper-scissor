@@ -6,7 +6,7 @@ A open-source ranked rock paper scissor game using Laravel, VueJS and Websocket
 ## Screenshots
 
 ![alt text](https://i.imgur.com/8zvXbrS.png)
-
+![alt text](https://i.imgur.com/8zvXbrS.png)
 
 ## Running on Localhost
 
