@@ -3,6 +3,11 @@
 
 A open-source ranked rock paper scissor game using Laravel, VueJS and Websocket
 
+## Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
 ## Running on Localhost
 
 Install Composer dependencies:
@@ -55,6 +60,13 @@ This command will run the websocket server in port 5050.
 - [ ]  Custom game creation
 - [ ]  User games info (total games, total wins, total loses)
 - [ ]  User friend system (maybe?)
+
+## Programming language versions
+
+**PHP:** 7.4.29
+
+**Laravel Framework:** 8.83.26
+
 
 ## License
 
