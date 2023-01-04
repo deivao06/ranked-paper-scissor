@@ -138,23 +138,28 @@ class WebsocketHandler implements MessageComponentInterface {
     public function onClose(ConnectionInterface $conn) {
         $player = $this->getPlayerByConn($conn);
         $room = $this->getRoomById($player->roomId);
+        
+        if($room){
+            if(($room->game && $room->game->ended) || $room->game == null){
+                if($room->game){
+                    if($player->id == $room->game->player1->info->id){
+                        $room->game->end($room->game->player2);
+                    }else{
+                        $room->game->end($room->game->player1);
+                    }
+        
+                    $formatedGame = $this->formatGame($player, $room->game);
+        
+                    $response = [
+                        "game" => $formatedGame,
+                        "command" => 'game-ended'
+                    ];
 
-        if($room && !$room->game->ended){
-            if($player->id == $room->game->player1->info->id){
-                $room->game->end($room->game->player2);
-            }else{
-                $room->game->end($room->game->player1);
+                    $room->sendMessageToRoom($response);
+                }
+    
+                $this->removeRoom($room);
             }
-
-            $formatedGame = $this->formatGame($player, $room->game);
-
-            $response = [
-                "game" => $formatedGame,
-                "command" => 'game-ended'
-            ];
-
-            $room->sendMessageToRoom($response);
-            $this->removeRoom($room);
         }
         
         echo "Connection {$conn->remoteAddress}|{$conn->resourceId} exit from room\n";
