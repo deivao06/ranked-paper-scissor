@@ -116,20 +116,25 @@ class WebsocketHandler implements MessageComponentInterface {
 
                 if($room && !$room->game->ended){
                     if($player->id == $room->game->player1->info->id){
-                        $room->game->end($room->game->player2);
+                        $room->game->chooseTurnOrGameWinner($room->game->player2);
                     }else{
-                        $room->game->end($room->game->player1);
+                        $room->game->chooseTurnOrGameWinner($room->game->player1);
                     }
 
-                    $formatedGame = $this->formatGame($player, $room->game);
-
-                    $response = [
-                        "game" => $formatedGame,
-                        "command" => 'game-ended'
-                    ];
-
-                    $room->sendMessageToRoom($response);
-                    $this->removeRoom($room);
+                    foreach($room->players as $player){
+                        $formatedGame = $this->formatGame($player, $room->game);
+    
+                        $response = [
+                            "game" => $formatedGame,
+                            "command" => 'game-update'
+                        ];
+    
+                        if($formatedGame->ended){
+                            $response["command"] = 'game-ended';
+                        }
+                        
+                        $player->conn->send(json_encode($response));
+                    }
                 }
             break;
         }
@@ -140,26 +145,24 @@ class WebsocketHandler implements MessageComponentInterface {
         $room = $this->getRoomById($player->roomId);
         
         if($room){
-            if(($room->game && $room->game->ended) || $room->game == null){
-                if($room->game){
-                    if($player->id == $room->game->player1->info->id){
-                        $room->game->end($room->game->player2);
-                    }else{
-                        $room->game->end($room->game->player1);
-                    }
-        
-                    $formatedGame = $this->formatGame($player, $room->game);
-        
-                    $response = [
-                        "game" => $formatedGame,
-                        "command" => 'game-ended'
-                    ];
-
-                    $room->sendMessageToRoom($response);
+            if($room->game){
+                if($player->id == $room->game->player1->info->id){
+                    $room->game->end($room->game->player2);
+                }else{
+                    $room->game->end($room->game->player1);
                 }
     
-                $this->removeRoom($room);
+                $formatedGame = $this->formatGame($player, $room->game);
+    
+                $response = [
+                    "game" => $formatedGame,
+                    "command" => 'game-ended'
+                ];
+
+                $room->sendMessageToRoom($response);
             }
+
+            $this->removeRoom($room);
         }
         
         echo "Connection {$conn->remoteAddress}|{$conn->resourceId} exit from room\n";

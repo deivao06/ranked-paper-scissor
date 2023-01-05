@@ -68,20 +68,24 @@ class Game
         }
     }
 
-    public function chooseTurnOrGameWinner(){
+    public function chooseTurnOrGameWinner($player = null){
         $this->history[$this->turn] = (object)[
             "player1" => clone $this->player1,
             "player2" => clone $this->player2
         ];
 
-        if($this->player1->choice == self::ROCK){
-            if($this->player2->choice == self::ROCK){
-                $this->history[$this->turn]->{"winner"} = "draw";
+        if($player){
+            $this->history[$this->turn]->{"winner"} = $player->info->name;
 
-                $this->turn ++;
-            }else if($this->player2->choice == self::PAPER){
-                $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+            if($player->info->id == $this->player1->info->id){
+                $this->player1->score++;
 
+                if($this->player1->score >= 3){
+                    $this->end($this->player1);
+                }
+
+                $this->turn++;
+            }else{
                 $this->player2->score++;
 
                 if($this->player2->score >= 3){
@@ -89,71 +93,89 @@ class Game
                 }
                 
                 $this->turn++;
-            }else if($this->player2->choice == self::SCISSOR){
-                $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
-
-                $this->player1->score++;
-
-                if($this->player1->score >= 3){
-                    $this->end($this->player1);
-                }
-
-                $this->turn++;
             }
-        }else if($this->player1->choice == self::PAPER){
-            if($this->player2->choice == self::ROCK){
-                $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
-
-                $this->player1->score++;
-
-                if($this->player1->score >= 3){
-                    $this->end($this->player1);
+        }else{
+            if($this->player1->choice == self::ROCK){
+                if($this->player2->choice == self::ROCK){
+                    $this->history[$this->turn]->{"winner"} = "draw";
+    
+                    $this->turn ++;
+                }else if($this->player2->choice == self::PAPER){
+                    $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+    
+                    $this->player2->score++;
+    
+                    if($this->player2->score >= 3){
+                        $this->end($this->player2);
+                    }
+                    
+                    $this->turn++;
+                }else if($this->player2->choice == self::SCISSOR){
+                    $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
+    
+                    $this->player1->score++;
+    
+                    if($this->player1->score >= 3){
+                        $this->end($this->player1);
+                    }
+    
+                    $this->turn++;
                 }
-
-                $this->turn++;
-            }else if($this->player2->choice == self::PAPER){
-                $this->history[$this->turn]->{"winner"} = "draw";
-                
-                $this->turn ++;
-            }else if($this->player2->choice == self::SCISSOR){
-                $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
-
-                $this->player2->score++;
-
-                if($this->player2->score >= 3){
-                    $this->end($this->player2);
+            }else if($this->player1->choice == self::PAPER){
+                if($this->player2->choice == self::ROCK){
+                    $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
+    
+                    $this->player1->score++;
+    
+                    if($this->player1->score >= 3){
+                        $this->end($this->player1);
+                    }
+    
+                    $this->turn++;
+                }else if($this->player2->choice == self::PAPER){
+                    $this->history[$this->turn]->{"winner"} = "draw";
+                    
+                    $this->turn ++;
+                }else if($this->player2->choice == self::SCISSOR){
+                    $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+    
+                    $this->player2->score++;
+    
+                    if($this->player2->score >= 3){
+                        $this->end($this->player2);
+                    }
+    
+                    $this->turn++;
                 }
-
-                $this->turn++;
-            }
-        }else if($this->player1->choice == self::SCISSOR){
-            if($this->player2->choice == self::ROCK){
-                $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
-
-                $this->player2->score++;
-
-                if($this->player2->score >= 3){
-                    $this->end($this->player2);
+            }else if($this->player1->choice == self::SCISSOR){
+                if($this->player2->choice == self::ROCK){
+                    $this->history[$this->turn]->{"winner"} = $this->player2->info->name;
+    
+                    $this->player2->score++;
+    
+                    if($this->player2->score >= 3){
+                        $this->end($this->player2);
+                    }
+    
+                    $this->turn++;
+                }else if($this->player2->choice == self::PAPER){
+                    $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
+    
+                    $this->player1->score++;
+    
+                    if($this->player1->score >= 3){
+                        $this->end($this->player1);
+                    }
+    
+                    $this->turn++;
+                }else if($this->player2->choice == self::SCISSOR){
+                    $this->history[$this->turn]->{"winner"} = "draw";
+    
+                    $this->turn ++;
                 }
-
-                $this->turn++;
-            }else if($this->player2->choice == self::PAPER){
-                $this->history[$this->turn]->{"winner"} = $this->player1->info->name;
-
-                $this->player1->score++;
-
-                if($this->player1->score >= 3){
-                    $this->end($this->player1);
-                }
-
-                $this->turn++;
-            }else if($this->player2->choice == self::SCISSOR){
-                $this->history[$this->turn]->{"winner"} = "draw";
-
-                $this->turn ++;
             }
         }
-
+        
         $this->resetBothPlayersChoiceAndState();
     }
 
