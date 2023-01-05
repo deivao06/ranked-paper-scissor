@@ -47,10 +47,10 @@ class RunWebsocketServer extends Command
                     new WebsocketHandler()
                 )
             ),
-            5050
+            3000
         );
         
-        echo "Websocket server running on port 5050 \n";
+        echo "Websocket server running on port 3000 \n";
         $server->run();
     }
 }

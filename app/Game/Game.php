@@ -179,6 +179,16 @@ class Game
         $this->resetBothPlayersChoiceAndState();
     }
 
+    public function timeoutDraw(){
+        $this->history[$this->turn] = (object)[
+            "player1" => clone $this->player1,
+            "player2" => clone $this->player2,
+            "winner" => "draw"
+        ];
+        $this->turn ++;
+        $this->resetBothPlayersChoiceAndState();
+    }
+
     public function end($player){
         $this->gameWinner = $player;
         $this->ended = true;

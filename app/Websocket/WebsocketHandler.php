@@ -115,10 +115,16 @@ class WebsocketHandler implements MessageComponentInterface {
                 $room = $this->getRoomById($player->roomId);
 
                 if($room && !$room->game->ended){
-                    if($player->id == $room->game->player1->info->id){
-                        $room->game->chooseTurnOrGameWinner($room->game->player2);
+                    if($room->game->player1->state == 'playing' && $room->game->player2->state == 'playing'){
+                        if($player->id == $room->game->player1->info->id){
+                            $room->game->timeoutDraw();
+                        }
                     }else{
-                        $room->game->chooseTurnOrGameWinner($room->game->player1);
+                        if($player->id == $room->game->player1->info->id){
+                            $room->game->chooseTurnOrGameWinner($room->game->player2);
+                        }else{
+                            $room->game->chooseTurnOrGameWinner($room->game->player1);
+                        }
                     }
 
                     foreach($room->players as $player){
@@ -145,7 +151,7 @@ class WebsocketHandler implements MessageComponentInterface {
         $room = $this->getRoomById($player->roomId);
         
         if($room){
-            if($room->game){
+            if($room->game && !$room->game->ended){
                 if($player->id == $room->game->player1->info->id){
                     $room->game->end($room->game->player2);
                 }else{

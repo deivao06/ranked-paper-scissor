@@ -148,7 +148,7 @@
             counterInterval: null,
         },
         created: function(){
-            this.connection = new WebSocket('ws://localhost:5050');
+            this.connection = new WebSocket('ws://2be8f68320e792.lhr.life');
 
             this.connection.onopen = function(event) {      
                 var data = {
@@ -188,7 +188,10 @@
                         app.startCounter();
                     break;
                     case 'game-update': 
-                        app.game = parse.game;
+                        var game = parse.game;
+                        game.player1.choice = app.game.player1.choice;
+
+                        app.game = game;
 
                         app.lastTurn(true);
 
@@ -225,8 +228,8 @@
                     command: 'end-turn'
                 }
 
-                app.connection.send(JSON.stringify(data));
                 app.stopCounter();
+                app.connection.send(JSON.stringify(data));
             },
             formatLastTurn: function(lastTurn){
                 var player1 = lastTurn.player1;
