@@ -11,7 +11,7 @@
     <div id="app-login">
         <div class="container-fluid min-vh-100 d-flex flex-column">
             <div class="row flex-grow-1 d-flex align-items-center justify-content-center">
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="card p-2">
                         <div class="card-body">
                             <div class="row text-center mb-2 card-title">
