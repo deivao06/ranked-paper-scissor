@@ -2,7 +2,7 @@
 
 @section('sidebar')
     <div id="app-sidebar" class="h-100">
-        <div v-if="show" class="d-flex flex-column h-100">
+        <div v-if="show" class="d-flex flex-align h-100">
             <div class="row h-50">
                 <div class="col">
                     <div class="row pb-2">
@@ -63,8 +63,8 @@
         <div class="lds-ripple mb-3"><div></div><div></div></div>
         <a href="{{route('master')}}" class="btn btn-primary">Cancel</a>
     </div>
-    <div v-else class="row w-100">
-        <div class="col-md-2 d-flex flex-column justify-content-center align-items-center scoreboard">
+    <div v-else class="row w-100 flex-grow-1">
+        <div class="col-md-2 d-flex flex-align align-items-center scoreboard">
             <div class="row score align-items-center justify-content-center">
                 @{{game.player2.score}}
             </div>
@@ -148,7 +148,7 @@
             counterInterval: null,
         },
         created: function(){
-            this.connection = new WebSocket('ws://2be8f68320e792.lhr.life');
+            this.connection = new WebSocket('ws://localhost:3000');
 
             this.connection.onopen = function(event) {      
                 var data = {

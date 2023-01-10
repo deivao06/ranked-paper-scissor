@@ -220,3 +220,15 @@ hr {
     font-size: 140px;
     color: #29d089 !important;
 }
+
+/* MOBILE */
+.flex-align {
+    flex-direction: row !important;
+    justify-content: space-around !important;
+}
+
+@media(min-width: 767px){
+    .flex-align {
+        flex-direction: column !important;
+    }
+}
