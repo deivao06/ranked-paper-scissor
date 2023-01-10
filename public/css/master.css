@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Erica+One&display=swap');
+
 html,
 body {
-    font-family: fantasy !important;
+    font-family: 'Erica One', cursive !important;
     color: #d9d9d9 !important
 }
 
@@ -227,8 +229,20 @@ hr {
     justify-content: space-around !important;
 }
 
-@media(min-width: 767px){
+@media(min-width: 768px){
     .flex-align {
         flex-direction: column !important;
+    }
+}
+
+@media(max-width: 365px){
+    .flex-align {
+        flex-direction: column !important;
+    }
+}
+
+@media(max-width: 768px){
+    .side-bar{
+        height: 10px;
     }
 }

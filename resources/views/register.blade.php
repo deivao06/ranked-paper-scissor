@@ -6,6 +6,9 @@
     <title>Ranked Paper Scissor</title>
     <link href="{{ asset('css/master.css') }}" rel="stylesheet" media="all">
     <link rel="stylesheet" href="{{mix('css/app.css')}}?v={{rand(1, 1000000000)}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Erica+One&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app-register">
