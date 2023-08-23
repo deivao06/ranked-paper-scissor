@@ -148,7 +148,7 @@
             counterInterval: null,
         },
         created: function(){
-            this.connection = new WebSocket('ws://172.22.50.19:3000');
+            this.connection = new WebSocket('ws://localhost:3000');
 
             this.connection.onopen = function(event) {      
                 var data = {
