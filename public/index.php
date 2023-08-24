@@ -44,6 +44,10 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
+if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Electron') !== false) {
+    $baseUrl = 'file://' . __DIR__;
+}
+
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
