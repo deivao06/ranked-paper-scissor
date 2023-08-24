@@ -8,11 +8,13 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "start": "concurrently --kill-others \" php artisan serve \" \" php artisan run:websocket \" \" electron . \""
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
         "axios": "^0.21",
+        "concurrently": "^8.2.1",
         "electron": "^26.1.0",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
