@@ -130,8 +130,8 @@ body {
 }
 
 /* SIDEBAR */
-.side-bar{ 
-    background-color: rgb(52 28 52) !important;
+.side-bar{
+    height: 100% !important;
 }
 
 /* MAIN CONTENT */
@@ -238,11 +238,5 @@ hr {
 @media(max-width: 365px){
     .flex-align {
         flex-direction: column !important;
-    }
-}
-
-@media(max-width: 768px){
-    .side-bar{
-        height: 10px;
     }
 }

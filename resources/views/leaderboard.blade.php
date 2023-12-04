@@ -10,7 +10,7 @@
                 <button type="button" class="btn btn-secondary btn-custom-game w-100 mb-2">Custom Game</button>
             </div>
         </div>
-        <div class="row flex-grow-1 align-items-end ">
+        <div class="row flex-grow-1 align-items-end">
             <div class="col">
                 <a type="button" class="btn btn-primary btn-ranked-game w-30" href="{{route('logout')}}">Logout</a>
             </div>
