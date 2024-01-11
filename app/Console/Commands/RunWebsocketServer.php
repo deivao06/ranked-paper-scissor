@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
-use App\WebSocket\WebsocketHandler;
+use App\Websocket\WebsocketHandler;
 
 class RunWebsocketServer extends Command
 {
